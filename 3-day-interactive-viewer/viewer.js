@@ -26,7 +26,7 @@ const state = {
 const canvas = document.querySelector("#slideCanvas");
 const ctx = canvas.getContext("2d", { alpha: false });
 const frame = document.querySelector("#canvasFrame");
-const ctaSlide = document.querySelector("#ctaSlide");
+let ctaSlide = document.querySelector("#ctaSlide");
 const loadingCard = document.querySelector("#loadingCard");
 const chapterList = document.querySelector("#chapterList");
 const mobileChapterList = document.querySelector("#mobileChapterList");
@@ -44,6 +44,39 @@ const drawer = document.querySelector("#mobileDrawer");
 const menuButton = document.querySelector("#menuButton");
 const drawerClose = document.querySelector("#drawerClose");
 const drawerBackdrop = document.querySelector("#drawerBackdrop");
+
+function ensureCtaSlide() {
+  if (ctaSlide) return ctaSlide;
+
+  ctaSlide = document.createElement("section");
+  ctaSlide.className = "cta-slide";
+  ctaSlide.id = "ctaSlide";
+  ctaSlide.setAttribute("aria-label", "Next step");
+  ctaSlide.innerHTML = `
+    <div class="cta-inner">
+      <p class="cta-kicker">Asset Vault Co.</p>
+      <h1>The Next Step</h1>
+      <p class="cta-lead">
+        If this 3-day starter plan helped you feel organized, the next move is the
+        <strong>14-Day Skinny-Fat Cut Meal Prep System.</strong>
+      </p>
+      <p class="cta-support">
+        The 14-Day system gives you a longer structure, more planning support, and a clearer path
+        for staying consistent beyond the first few days.
+      </p>
+      <a
+        class="cta-button"
+        id="ctaButton"
+        href="https://whop.com/asset-vault-co/14-day-skinny-fat-cut-meal-prep-system/?ref=related_products&funnelId=product_7c046451-aaf5-494e-9b90-8d4e13ff7bb6"
+        target="_top"
+      >
+        Unlock the 14-Day System
+      </a>
+    </div>
+  `;
+  frame.append(ctaSlide);
+  return ctaSlide;
+}
 
 function makeChapterButton(chapter, index) {
   const button = document.createElement("button");
@@ -108,7 +141,7 @@ async function renderPage(pageNumber) {
 
   if (chapter?.type === "cta" || pageNumber > state.pdf.numPages) {
     canvas.style.display = "none";
-    ctaSlide.classList.add("is-visible");
+    ensureCtaSlide().classList.add("is-visible");
     loadingCard.classList.add("is-hidden");
     frame.classList.remove("is-changing");
     state.rendering = false;
@@ -116,7 +149,7 @@ async function renderPage(pageNumber) {
   }
 
   canvas.style.display = "block";
-  ctaSlide.classList.remove("is-visible");
+  ensureCtaSlide().classList.remove("is-visible");
 
   const page = await state.pdf.getPage(pageNumber);
   const availableWidth = Math.max(320, frame.clientWidth);
