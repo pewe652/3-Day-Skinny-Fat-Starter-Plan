@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>3-Day Skinny-Fat Starter Plan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Oswald:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Slide navigation">
+        <div class="brand-block">
+          <span>Asset Vault Co.</span>
+          <strong>3-Day Starter</strong>
+        </div>
+
+        <nav class="chapter-list" id="chapterList"></nav>
+
+        <div class="sidebar-footer">
+          <span id="pageStatus">Page 1 of 10</span>
+          <div class="progress-track" aria-hidden="true">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="viewer">
+        <header class="topbar">
+          <button class="icon-button mobile-menu" id="menuButton" type="button" aria-label="Open slide list">
+            <span></span>
+            <span></span>
+          </button>
+          <div class="topbar-title">
+            <span id="currentKicker">STARTER PLAN</span>
+            <strong id="currentTitle">Cover</strong>
+          </div>
+          <a class="download-link" href="./assets/3-day-skinny-fat-starter-plan.pdf" download>
+            PDF
+          </a>
+        </header>
+
+        <section class="stage" aria-live="polite">
+          <button class="edge-control edge-control-left" id="prevEdge" type="button" aria-label="Previous slide">
+            ‹
+          </button>
+
+          <div class="canvas-frame" id="canvasFrame">
+            <div class="loading-card" id="loadingCard">
+              <strong>Loading product</strong>
+              <span>Preparing the interactive viewer...</span>
+            </div>
+            <canvas id="slideCanvas"></canvas>
+          </div>
+
+          <button class="edge-control edge-control-right" id="nextEdge" type="button" aria-label="Next slide">
+            ›
+          </button>
+        </section>
+
+        <footer class="bottom-controls">
+          <button class="control-button" id="prevButton" type="button">Previous</button>
+          <div class="mobile-progress">
+            <span id="mobilePageStatus">1 / 10</span>
+            <div class="progress-track" aria-hidden="true">
+              <div class="progress-fill" id="mobileProgressFill"></div>
+            </div>
+          </div>
+          <button class="control-button control-button-primary" id="nextButton" type="button">Next</button>
+        </footer>
+      </main>
+    </div>
+
+    <div class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
+      <button class="drawer-backdrop" id="drawerBackdrop" type="button" aria-label="Close slide list"></button>
+      <div class="drawer-panel" role="dialog" aria-label="Slide list">
+        <div class="drawer-head">
+          <strong>Pages</strong>
+          <button class="icon-button" id="drawerClose" type="button" aria-label="Close slide list">×</button>
+        </div>
+        <nav class="chapter-list" id="mobileChapterList"></nav>
+      </div>
+    </div>
+
+    <script src="./viewer.js" type="module"></script>
+  </body>
+</html>
