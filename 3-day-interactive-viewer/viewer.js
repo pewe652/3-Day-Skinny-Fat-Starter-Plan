@@ -1,5 +1,15 @@
-const pdfUrl = "./assets/3-day-skinny-fat-starter-plan.pdf";
-import * as pdfjsLib from "./vendor/pdfjs/pdf.mjs";
+const slideSources = [
+  "./assets/slides/page-01.png",
+  "./assets/slides/page-02.png",
+  "./assets/slides/page-03.png",
+  "./assets/slides/page-04.png",
+  "./assets/slides/page-05.png",
+  "./assets/slides/page-06.png",
+  "./assets/slides/page-07.png",
+  "./assets/slides/page-08.png",
+  "./assets/slides/page-09.png",
+  "./assets/slides/page-10.png",
+];
 
 const chapters = [
   { title: "Cover", kicker: "Starter Plan" },
@@ -16,16 +26,12 @@ const chapters = [
 ];
 
 const state = {
-  pdf: null,
   page: 1,
   pageCount: chapters.length,
-  rendering: false,
-  queuedPage: null,
 };
 
-const canvas = document.querySelector("#slideCanvas");
-const ctx = canvas.getContext("2d", { alpha: false });
 const frame = document.querySelector("#canvasFrame");
+const slideImage = document.querySelector("#slideImage");
 let ctaSlide = document.querySelector("#ctaSlide");
 const loadingCard = document.querySelector("#loadingCard");
 const chapterList = document.querySelector("#chapterList");
@@ -105,7 +111,7 @@ function buildNavigation() {
 }
 
 function updateChrome() {
-  const chapter = chapters[state.page - 1] ?? chapters[0];
+  const chapter = chapters[state.page - 1] || chapters[0];
   const progress = `${(state.page / state.pageCount) * 100}%`;
   pageStatus.textContent = `Page ${state.page} of ${state.pageCount}`;
   mobilePageStatus.textContent = `${state.page} / ${state.pageCount}`;
@@ -128,56 +134,38 @@ function updateChrome() {
   });
 }
 
-async function renderPage(pageNumber) {
-  if (!state.pdf) return;
-  if (state.rendering) {
-    state.queuedPage = pageNumber;
-    return;
-  }
-
-  state.rendering = true;
-  frame.classList.add("is-changing");
+function renderPage(pageNumber) {
   const chapter = chapters[pageNumber - 1];
+  frame.classList.add("is-changing");
+  loadingCard.classList.add("is-hidden");
 
-  if (chapter?.type === "cta" || pageNumber > state.pdf.numPages) {
-    canvas.style.display = "none";
+  if (chapter && chapter.type === "cta") {
+    frame.classList.add("has-cta");
+    slideImage.style.display = "none";
     ensureCtaSlide().classList.add("is-visible");
-    loadingCard.classList.add("is-hidden");
     frame.classList.remove("is-changing");
-    state.rendering = false;
     return;
   }
 
-  canvas.style.display = "block";
+  frame.classList.remove("has-cta");
   ensureCtaSlide().classList.remove("is-visible");
-
-  const page = await state.pdf.getPage(pageNumber);
-  const availableWidth = Math.max(320, frame.clientWidth);
-  const availableHeight = Math.max(180, frame.clientHeight);
-  const baseViewport = page.getViewport({ scale: 1 });
-  const scale = Math.min(availableWidth / baseViewport.width, availableHeight / baseViewport.height) * window.devicePixelRatio;
-  const viewport = page.getViewport({ scale });
-
-  canvas.width = Math.floor(viewport.width);
-  canvas.height = Math.floor(viewport.height);
-  canvas.style.width = `${Math.floor(viewport.width / window.devicePixelRatio)}px`;
-  canvas.style.height = `${Math.floor(viewport.height / window.devicePixelRatio)}px`;
-
-  await page.render({ canvasContext: ctx, viewport }).promise;
-  loadingCard.classList.add("is-hidden");
-  frame.classList.remove("is-changing");
-  state.rendering = false;
-
-  if (state.queuedPage && state.queuedPage !== pageNumber) {
-    const queued = state.queuedPage;
-    state.queuedPage = null;
-    renderPage(queued);
-  }
+  slideImage.style.display = "block";
+  slideImage.alt = `${chapter.title} page`;
+  slideImage.onload = () => frame.classList.remove("is-changing");
+  slideImage.onerror = () => {
+    frame.classList.remove("is-changing");
+    loadingCard.classList.remove("is-hidden");
+    loadingCard.innerHTML = `
+      <strong>Could not load</strong>
+      <span>Missing slide image: ${slideSources[pageNumber - 1]}</span>
+    `;
+  };
+  slideImage.src = slideSources[pageNumber - 1];
 }
 
 function goTo(page) {
   const nextPage = Math.min(Math.max(page, 1), state.pageCount);
-  if (nextPage === state.page && canvas.width) return;
+  if (nextPage === state.page && slideImage.src) return;
   state.page = nextPage;
   updateChrome();
   renderPage(state.page);
@@ -219,9 +207,7 @@ function bindControls() {
       event.preventDefault();
       previous();
     }
-    if (event.key === "Escape") {
-      closeDrawer();
-    }
+    if (event.key === "Escape") closeDrawer();
   });
 
   let startX = 0;
@@ -241,29 +227,13 @@ function bindControls() {
       if (dx > 0) previous();
     }
   }, { passive: true });
-
-  let resizeTimer = null;
-  window.addEventListener("resize", () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => renderPage(state.page), 160);
-  });
 }
 
-async function boot() {
+function boot() {
   buildNavigation();
   bindControls();
   updateChrome();
-
-  pdfjsLib.GlobalWorkerOptions.workerSrc = "./vendor/pdfjs/pdf.worker.mjs";
-  state.pdf = await pdfjsLib.getDocument(pdfUrl).promise;
-  state.pageCount = chapters.length;
-  updateChrome();
-  await renderPage(state.page);
+  renderPage(state.page);
 }
 
-boot().catch((error) => {
-  loadingCard.innerHTML = `
-    <strong>Could not load</strong>
-    <span>${error.message}</span>
-  `;
-});
+boot();

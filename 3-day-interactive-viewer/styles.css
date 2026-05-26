@@ -279,15 +279,16 @@ a {
   box-shadow: var(--shadow);
 }
 
-canvas {
+.slide-image {
   display: block;
   max-width: 100%;
   max-height: 100%;
   opacity: 1;
+  object-fit: contain;
   transition: opacity 150ms ease, transform 150ms ease;
 }
 
-.canvas-frame.is-changing canvas {
+.canvas-frame.is-changing .slide-image {
   opacity: 0.28;
   transform: scale(0.992);
 }
@@ -530,6 +531,11 @@ canvas {
     height: auto;
     max-height: none;
     aspect-ratio: 16 / 9;
+  }
+
+  .canvas-frame.has-cta {
+    height: min(62svh, 560px);
+    aspect-ratio: auto;
   }
 
   .edge-control {
