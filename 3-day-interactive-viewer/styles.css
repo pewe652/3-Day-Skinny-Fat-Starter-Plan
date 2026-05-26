@@ -292,6 +292,98 @@ canvas {
   transform: scale(0.992);
 }
 
+.cta-slide {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-items: center;
+  padding: clamp(28px, 6vw, 78px);
+  background:
+    radial-gradient(circle at 50% 92%, rgba(232, 93, 4, 0.18), transparent 30%),
+    linear-gradient(180deg, #151517 0%, #101012 100%);
+}
+
+.cta-slide.is-visible {
+  display: grid;
+}
+
+.cta-inner {
+  display: grid;
+  justify-items: center;
+  gap: clamp(14px, 2.4vw, 28px);
+  width: min(920px, 100%);
+  text-align: center;
+}
+
+.cta-kicker {
+  margin: 0;
+  color: var(--orange);
+  font-size: clamp(10px, 1vw, 13px);
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.cta-inner h1 {
+  margin: 0;
+  color: var(--text);
+  font-family: Oswald, Inter, sans-serif;
+  font-size: clamp(42px, 7vw, 78px);
+  line-height: 0.98;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+}
+
+.cta-lead,
+.cta-support {
+  margin: 0;
+  max-width: 870px;
+  color: var(--text);
+  font-size: clamp(18px, 2.1vw, 30px);
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.cta-lead strong {
+  font-weight: 800;
+}
+
+.cta-support {
+  max-width: 760px;
+  color: var(--muted);
+  font-family: Oswald, Inter, sans-serif;
+  font-size: clamp(18px, 1.8vw, 28px);
+  letter-spacing: 0.02em;
+}
+
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(58px, 8vw, 92px);
+  min-width: min(560px, 100%);
+  padding: 0 clamp(28px, 5vw, 58px);
+  border: 5px solid #b94800;
+  border-radius: 999px;
+  background: var(--orange);
+  box-shadow: 0 18px 42px rgba(232, 93, 4, 0.22);
+  color: white;
+  font-family: Oswald, Inter, sans-serif;
+  font-size: clamp(24px, 3vw, 37px);
+  font-weight: 700;
+  letter-spacing: 0.015em;
+  text-decoration: underline;
+  text-transform: uppercase;
+  text-underline-offset: 6px;
+}
+
+.cta-button:hover,
+.cta-button:focus-visible {
+  filter: brightness(1.08);
+  outline: 3px solid rgba(255, 255, 255, 0.32);
+  outline-offset: 4px;
+}
+
 .loading-card {
   position: absolute;
   inset: auto;
@@ -454,6 +546,25 @@ canvas {
     height: 44px;
     padding: 0 10px;
     font-size: 11px;
+  }
+
+  .cta-slide {
+    padding: 24px;
+  }
+
+  .cta-inner {
+    gap: 15px;
+  }
+
+  .cta-lead,
+  .cta-support {
+    max-width: 100%;
+  }
+
+  .cta-button {
+    min-width: 100%;
+    border-width: 3px;
+    text-underline-offset: 4px;
   }
 
   .mobile-drawer {

@@ -12,6 +12,7 @@ const chapters = [
   { title: "Day 2", kicker: "Repetition" },
   { title: "Day 3", kicker: "Reflection" },
   { title: "Easy Swaps", kicker: "Flexibility" },
+  { title: "Next Step", kicker: "14-Day System", type: "cta" },
 ];
 
 const state = {
@@ -25,6 +26,7 @@ const state = {
 const canvas = document.querySelector("#slideCanvas");
 const ctx = canvas.getContext("2d", { alpha: false });
 const frame = document.querySelector("#canvasFrame");
+const ctaSlide = document.querySelector("#ctaSlide");
 const loadingCard = document.querySelector("#loadingCard");
 const chapterList = document.querySelector("#chapterList");
 const mobileChapterList = document.querySelector("#mobileChapterList");
@@ -102,6 +104,19 @@ async function renderPage(pageNumber) {
 
   state.rendering = true;
   frame.classList.add("is-changing");
+  const chapter = chapters[pageNumber - 1];
+
+  if (chapter?.type === "cta" || pageNumber > state.pdf.numPages) {
+    canvas.style.display = "none";
+    ctaSlide.classList.add("is-visible");
+    loadingCard.classList.add("is-hidden");
+    frame.classList.remove("is-changing");
+    state.rendering = false;
+    return;
+  }
+
+  canvas.style.display = "block";
+  ctaSlide.classList.remove("is-visible");
 
   const page = await state.pdf.getPage(pageNumber);
   const availableWidth = Math.max(320, frame.clientWidth);
@@ -208,7 +223,7 @@ async function boot() {
 
   pdfjsLib.GlobalWorkerOptions.workerSrc = "./vendor/pdfjs/pdf.worker.mjs";
   state.pdf = await pdfjsLib.getDocument(pdfUrl).promise;
-  state.pageCount = Math.min(state.pdf.numPages, chapters.length);
+  state.pageCount = chapters.length;
   updateChrome();
   await renderPage(state.page);
 }
